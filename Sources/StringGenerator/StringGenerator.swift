@@ -61,39 +61,9 @@ public struct StringGenerator {
             ],
             extendedType: IdentifierTypeSyntax(name: "LocalizedStringResource"),
             memberBlock: MemberBlockSyntax {
-                // Table struct
-                StructDeclSyntax(
-                    leadingTrivia: typeDocumentation,
-                    modifiers: [
-                        DeclModifierSyntax(name: accessLevel.token)
-                    ],
-                    name: structToken,
-                    memberBlockBuilder: {
-                        for resource in resources {
-                            resource.declaration(tableName: tableName, accessLevel: accessLevel.token)
-                        }
-                    },
-                    trailingTrivia: .newlines(2)
-                )
-
-                // Table accessor
-                VariableDeclSyntax(
-                    leadingTrivia: typeDocumentation,
-                    modifiers: [
-                        DeclModifierSyntax(name: accessLevel.token),
-                        DeclModifierSyntax(name: .keyword(.static))
-                    ],
-                    .let,
-                    name: PatternSyntax(IdentifierPatternSyntax(identifier: variableToken)),
-                    initializer: InitializerClauseSyntax(
-                        value: FunctionCallExprSyntax(
-                            calledExpression: DeclReferenceExprSyntax(baseName: structToken),
-                            leftParen: .leftParenToken(),
-                            arguments: [],
-                            rightParen: .rightParenToken()
-                        )
-                    )
-                )
+                for resource in resources {
+                    resource.declaration(tableName: tableName, accessLevel: accessLevel.token)
+                }
             }
         )
     }
@@ -217,7 +187,8 @@ extension Resource {
             VariableDeclSyntax(
                 leadingTrivia: leadingTrivia,
                 modifiers: [
-                    DeclModifierSyntax(name: accessLevel)
+                    DeclModifierSyntax(name: accessLevel),
+                    DeclModifierSyntax(name: .keyword(.static))
                 ],
                 bindingSpecifier: .keyword(.var),
                 bindings: [
@@ -234,7 +205,8 @@ extension Resource {
             FunctionDeclSyntax(
                 leadingTrivia: leadingTrivia,
                 modifiers: [
-                    DeclModifierSyntax(name: accessLevel)
+                    DeclModifierSyntax(name: accessLevel),
+                    DeclModifierSyntax(name: .keyword(.static))
                 ],
                 name: name,
                 signature: FunctionSignatureSyntax(
